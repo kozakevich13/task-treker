@@ -1,16 +1,19 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity  } from 'react-native';
 import CheckBox from 'expo-checkbox';
 
 const Task = ({ task, toggleTask }) => {
   return (
-    <View style={styles.taskContainer}>
+    <TouchableOpacity 
+      style={styles.taskContainer}
+      onPress={() => toggleTask(task.id)}
+    >
       <CheckBox
         value={task.completed}
         onValueChange={() => toggleTask(task.id)}
       />
       <Text style={styles.taskText}>{task.text}</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

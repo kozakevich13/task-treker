@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 import TaskList from './screens/TaskList';
 
 const App = () => {
   const [taskText, setTaskText] = useState('');
   const [tasks, setTasks] = useState([]);
+  const [completedCount, setCompletedCount] = useState(0);
+
+  useEffect(() => {
+    updateCompletedCount();
+  }, [tasks]); // Запускати updateCompletedCount при зміні стану tasks
 
   const addTask = () => {
     if (taskText) {
@@ -22,9 +27,16 @@ const App = () => {
   const toggleTask = (taskId) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
+        task.id === taskId
+          ? { ...task, completed: !task.completed }
+          : task
       )
     );
+  };
+
+  const updateCompletedCount = () => {
+    const count = tasks.filter((task) => task.completed).length;
+    setCompletedCount(count);
   };
 
   return (
@@ -36,6 +48,7 @@ const App = () => {
         onChangeText={(text) => setTaskText(text)}
       />
       <Button title="Add Task" onPress={addTask} />
+      <Text>Total Completed Tasks: {completedCount}</Text>
       <TaskList tasks={tasks} toggleTask={toggleTask} />
     </View>
   );
