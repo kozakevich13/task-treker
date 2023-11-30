@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const DailyTasksScreen = ({ navigation, route }) => {
   const [dailyTaskText, setDailyTaskText] = useState('');
   const [dailyTasks, setDailyTasks] = useState([]);
-  const { addDailyTaskToMain } = route.params;
+  const { addDailyTaskToMain } = route.params || {};
 
   // Завантаження збережених завдань при монтажі компонента
   useEffect(() => {

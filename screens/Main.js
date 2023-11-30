@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 import TaskList from './TaskList';
 
@@ -11,9 +11,9 @@ const Main = ({navigation }) => {
   const [tasks, setTasks] = useState([]);
   const [completedCount, setCompletedCount] = useState(0);
 
-  const addDailyTaskToMain = (newTask) => {
+  const addDailyTaskToMain = useCallback((newTask) => {
     setTasks([...tasks, newTask]);
-  };
+  }, [tasks]);
 
   useEffect(() => {
     updateCompletedCount();
@@ -54,7 +54,12 @@ const Main = ({navigation }) => {
     <Text>main page!</Text>
     <Button
         title="Go to Daily Tasks"
-        onPress={() => navigation.navigate('DailyTasks' , { addDailyTaskToMain })}
+        onPress={() =>
+          navigation.navigate('DailyTasks', {
+            addDailyTaskToMain: addDailyTaskToMain,
+          })
+        }
+        
       />
     <TextInput
       style={styles.input}
