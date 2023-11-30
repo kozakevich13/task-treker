@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, CheckBox } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import CheckBox from 'expo-checkbox';
 
 const Task = ({ task, toggleTask }) => {
   return (
