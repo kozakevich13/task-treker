@@ -11,6 +11,10 @@ const Main = ({navigation }) => {
   const [tasks, setTasks] = useState([]);
   const [completedCount, setCompletedCount] = useState(0);
 
+  const addDailyTaskToMain = (newTask) => {
+    setTasks([...tasks, newTask]);
+  };
+
   useEffect(() => {
     updateCompletedCount();
   }, [tasks]); // Запускати updateCompletedCount при зміні стану tasks
@@ -50,7 +54,7 @@ const Main = ({navigation }) => {
     <Text>main page!</Text>
     <Button
         title="Go to Daily Tasks"
-        onPress={() => navigation.navigate('DailyTasks')}
+        onPress={() => navigation.navigate('DailyTasks' , { addDailyTaskToMain })}
       />
     <TextInput
       style={styles.input}
