@@ -1,10 +1,17 @@
-// DailyTasksScreen.js
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Text, StyleSheet  } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  TextInput,
+  Button,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const DailyTasksScreen = ({ navigation, route }) => {
-  const [dailyTaskText, setDailyTaskText] = useState('');
+  const [dailyTaskText, setDailyTaskText] = useState("");
   const [dailyTasks, setDailyTasks] = useState([]);
   const { addDailyTaskToMain } = route.params || {};
 
@@ -21,21 +28,21 @@ const DailyTasksScreen = ({ navigation, route }) => {
   // Завантаження завдань з AsyncStorage
   const loadDailyTasks = async () => {
     try {
-      const storedTasks = await AsyncStorage.getItem('dailyTasks');
+      const storedTasks = await AsyncStorage.getItem("dailyTasks");
       if (storedTasks) {
         setDailyTasks(JSON.parse(storedTasks));
       }
     } catch (error) {
-      console.error('Error loading daily tasks:', error);
+      console.error("Error loading daily tasks:", error);
     }
   };
 
   // Збереження завдань в AsyncStorage
   const saveDailyTasks = async () => {
     try {
-      await AsyncStorage.setItem('dailyTasks', JSON.stringify(dailyTasks));
+      await AsyncStorage.setItem("dailyTasks", JSON.stringify(dailyTasks));
     } catch (error) {
-      console.error('Error saving daily tasks:', error);
+      console.error("Error saving daily tasks:", error);
     }
   };
 
@@ -47,13 +54,27 @@ const DailyTasksScreen = ({ navigation, route }) => {
       };
 
       setDailyTasks([...dailyTasks, newDailyTask]);
-      setDailyTaskText('');
+      setDailyTaskText("");
 
       if (addDailyTaskToMain) {
         addDailyTaskToMain(newDailyTask);
       }
     }
   };
+
+  const removeDailyTask = (taskId) => {
+    const updatedTasks = dailyTasks.filter((task) => task.id !== taskId);
+    setDailyTasks(updatedTasks);
+  };
+
+  const renderItem = ({ item }) => (
+    <View style={styles.taskContainer}>
+      <Text>{item.text}</Text>
+      <TouchableOpacity onPress={() => removeDailyTask(item.id)}>
+        <Text style={styles.removeButton}>Remove</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -64,10 +85,12 @@ const DailyTasksScreen = ({ navigation, route }) => {
         onChangeText={(text) => setDailyTaskText(text)}
       />
       <Button title="Add Daily Task" onPress={addDailyTask} />
-      {/* Display the list of daily tasks */}
-      {dailyTasks.map((task) => (
-        <Text key={task.id}>{task.text}</Text>
-      ))}
+
+      <FlatList
+        data={dailyTasks}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+      />
     </View>
   );
 };
@@ -76,15 +99,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     marginBottom: 8,
     marginTop: 20,
     paddingHorizontal: 8,
+  },
+  taskContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  removeButton: {
+    color: "red",
+    marginLeft: 8,
   },
 });
 
