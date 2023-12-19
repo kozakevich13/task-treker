@@ -41,6 +41,8 @@ const DailyTasksScreen = ({ navigation, route }) => {
   const saveDailyTasks = async () => {
     try {
       await AsyncStorage.setItem("dailyTasks", JSON.stringify(dailyTasks));
+      // Додавання завдань до списку tasks
+      addTasksToMain(dailyTasks);
     } catch (error) {
       console.error("Error saving daily tasks:", error);
     }
@@ -65,6 +67,22 @@ const DailyTasksScreen = ({ navigation, route }) => {
   const removeDailyTask = (taskId) => {
     const updatedTasks = dailyTasks.filter((task) => task.id !== taskId);
     setDailyTasks(updatedTasks);
+  };
+
+  const addTasksToMain = async (tasks) => {
+    try {
+      // Отримання списку tasks з локального сховища
+      const storedTasks = await AsyncStorage.getItem("tasks");
+      const existingTasks = storedTasks ? JSON.parse(storedTasks) : [];
+
+      // Додавання нових завдань до списку tasks
+      const updatedTasks = [...existingTasks, ...tasks];
+
+      // Збереження оновленого списку tasks
+      await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
+    } catch (error) {
+      console.error("Error adding tasks to main:", error);
+    }
   };
 
   const renderItem = ({ item }) => (
