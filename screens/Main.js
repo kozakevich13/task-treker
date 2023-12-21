@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,10 +8,16 @@ import {
   StyleSheet,
 } from "react-native";
 import CheckBox from "expo-checkbox";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Main = ({ navigation }) => {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    // При завантаженні компонента зчитайте дані з пам'яті телефону
+    loadTasks();
+  }, []);
 
   const addTask = () => {
     let newTask = {
@@ -24,11 +30,13 @@ const Main = ({ navigation }) => {
     if (task.trim() !== "") {
       setTasks([...tasks, newTask]);
       setTask("");
+      saveTasks([...tasks, newTask]); // Зберігаємо дані після додавання завдання
     }
   };
 
   const removeTask = (taskId) => {
     setTasks(tasks.filter((t) => t.id !== taskId));
+    saveTasks(tasks.filter((t) => t.id !== taskId)); // Зберігаємо дані після видалення завдання
   };
 
   const toggleTask = (taskId) => {
@@ -37,6 +45,31 @@ const Main = ({ navigation }) => {
         t.id === taskId ? { ...t, completed: !t.completed } : t
       )
     );
+    saveTasks(
+      tasks.map((t) =>
+        t.id === taskId ? { ...t, completed: !t.completed } : t
+      )
+    ); // Зберігаємо дані після зміни статусу завдання
+  };
+
+  const saveTasks = async (tasks) => {
+    try {
+      const jsonTasks = JSON.stringify(tasks);
+      await AsyncStorage.setItem("tasks", jsonTasks);
+    } catch (error) {
+      console.error("Error saving tasks: ", error);
+    }
+  };
+
+  const loadTasks = async () => {
+    try {
+      const jsonTasks = await AsyncStorage.getItem("tasks");
+      if (jsonTasks) {
+        setTasks(JSON.parse(jsonTasks));
+      }
+    } catch (error) {
+      console.error("Error loading tasks: ", error);
+    }
   };
 
   console.log(tasks);
