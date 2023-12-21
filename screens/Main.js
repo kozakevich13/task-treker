@@ -7,14 +7,22 @@ import {
   FlatList,
   StyleSheet,
 } from "react-native";
+import CheckBox from "expo-checkbox";
 
 const Main = ({ navigation }) => {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
 
   const addTask = () => {
+    let newTask = {
+      id: Date.now().toString(),
+      text: task,
+      completed: false,
+      repeat: false,
+      repeat_num: 0,
+    };
     if (task.trim() !== "") {
-      setTasks([...tasks, { id: Date.now().toString(), text: task }]);
+      setTasks([...tasks, newTask]);
       setTask("");
     }
   };
@@ -22,6 +30,16 @@ const Main = ({ navigation }) => {
   const removeTask = (taskId) => {
     setTasks(tasks.filter((t) => t.id !== taskId));
   };
+
+  const toggleTask = (taskId) => {
+    setTasks(
+      tasks.map((t) =>
+        t.id === taskId ? { ...t, completed: !t.completed } : t
+      )
+    );
+  };
+
+  console.log(tasks);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Todo List</Text>
@@ -37,7 +55,17 @@ const Main = ({ navigation }) => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.taskItem}>
-            <Text>{item.text}</Text>
+            <CheckBox
+              value={item.completed}
+              onValueChange={() => toggleTask(item.id)}
+            />
+            <Text
+              style={{
+                textDecorationLine: item.completed ? "line-through" : "none",
+              }}
+            >
+              {item.text}
+            </Text>
             <Button title="Remove" onPress={() => removeTask(item.id)} />
           </View>
         )}
