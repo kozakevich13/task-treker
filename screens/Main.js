@@ -15,6 +15,8 @@ import { useNavigation } from "@react-navigation/native";
 const Main = () => {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
+  const [dailyTasks, setDailyTasks] = useState([]);
+
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -36,6 +38,7 @@ const Main = () => {
       setTasks([...tasks, newTask]);
       setTask("");
       saveTasks([...tasks, newTask]);
+      saveDailyTasks([...dailyTasks]);
     }
   };
 
@@ -47,12 +50,31 @@ const Main = () => {
   const toggleTask = (taskId) => {
     setTasks(
       tasks.map((t) =>
-        t.id === taskId ? { ...t, completed: !t.completed } : t
+        t.id === taskId
+          ? { ...t, completed: !t.completed, repeat_num: t.repeat_num + 1 }
+          : t
       )
     );
     saveTasks(
       tasks.map((t) =>
-        t.id === taskId ? { ...t, completed: !t.completed } : t
+        t.id === taskId
+          ? { ...t, completed: !t.completed, repeat_num: t.repeat_num + 1 }
+          : t
+      )
+    );
+
+    setDailyTasks(
+      dailyTasks.map((t) =>
+        t.id === taskId
+          ? { ...t, completed: !t.completed, repeat_num: t.repeat_num + 1 }
+          : t
+      )
+    );
+    saveDailyTasks(
+      dailyTasks.map((t) =>
+        t.id === taskId
+          ? { ...t, completed: !t.completed, repeat_num: t.repeat_num + 1 }
+          : t
       )
     );
   };
@@ -66,11 +88,29 @@ const Main = () => {
     }
   };
 
+  const saveDailyTasks = async (tasks) => {
+    try {
+      const jsonTasks = JSON.stringify(tasks);
+      await AsyncStorage.setItem("dailyTasks", jsonTasks);
+    } catch (error) {
+      console.error("Error saving tasks: ", error);
+    }
+  };
+
   const loadTasks = async () => {
     try {
       const jsonTasks = await AsyncStorage.getItem("tasks");
       if (jsonTasks) {
         setTasks(JSON.parse(jsonTasks));
+      }
+    } catch (error) {
+      console.error("Error loading tasks: ", error);
+    }
+
+    try {
+      const jsonTasks = await AsyncStorage.getItem("dailyTasks");
+      if (jsonTasks) {
+        setDailyTasks(JSON.parse(jsonTasks));
       }
     } catch (error) {
       console.error("Error loading tasks: ", error);

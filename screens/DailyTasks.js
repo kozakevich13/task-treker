@@ -88,14 +88,14 @@ const DailyTasks = () => {
           <View style={styles.taskItem}>
             <Text
               style={{
-                textDecorationLine: item.completed ? "line-through" : "none",
+                textDecorationLine: item.completed,
               }}
             >
               {item.text}
             </Text>
             <Text
               style={{
-                textDecorationLine: item.completed ? "line-through" : "none",
+                textDecorationLine: item.completed,
               }}
             >
               {item.repeat_num}
