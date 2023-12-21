@@ -30,6 +30,7 @@ const DailyTasks = () => {
       setTasks([...tasks, newTask]);
       setTask("");
       saveTasks([...tasks, newTask]);
+      addTaskToMainList(newTask);
     }
   };
 
@@ -55,6 +56,18 @@ const DailyTasks = () => {
       }
     } catch (error) {
       console.error("Error loading tasks: ", error);
+    }
+  };
+
+  const addTaskToMainList = async (newTask) => {
+    try {
+      const jsonMainTasks = await AsyncStorage.getItem("tasks");
+      let mainTasks = jsonMainTasks ? JSON.parse(jsonMainTasks) : [];
+      mainTasks.push(newTask);
+      const jsonUpdatedMainTasks = JSON.stringify(mainTasks);
+      await AsyncStorage.setItem("tasks", jsonUpdatedMainTasks);
+    } catch (error) {
+      console.error("Error adding task to main list: ", error);
     }
   };
 

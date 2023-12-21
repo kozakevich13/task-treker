@@ -18,8 +18,11 @@ const Main = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    loadTasks();
-  }, []);
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadTasks();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const addTask = () => {
     let newTask = {
@@ -75,7 +78,7 @@ const Main = () => {
   };
 
   const goToDailyTasks = () => {
-    navigation.navigate("DailyTasks"); // Перехід на сторінку DailyTasks
+    navigation.navigate("DailyTasks");
   };
 
   return (
