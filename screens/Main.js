@@ -1,3 +1,4 @@
+// Main.js
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -9,13 +10,14 @@ import {
 } from "react-native";
 import CheckBox from "expo-checkbox";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
-const Main = ({ navigation }) => {
+const Main = () => {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
-    // При завантаженні компонента зчитайте дані з пам'яті телефону
     loadTasks();
   }, []);
 
@@ -30,13 +32,13 @@ const Main = ({ navigation }) => {
     if (task.trim() !== "") {
       setTasks([...tasks, newTask]);
       setTask("");
-      saveTasks([...tasks, newTask]); // Зберігаємо дані після додавання завдання
+      saveTasks([...tasks, newTask]);
     }
   };
 
   const removeTask = (taskId) => {
     setTasks(tasks.filter((t) => t.id !== taskId));
-    saveTasks(tasks.filter((t) => t.id !== taskId)); // Зберігаємо дані після видалення завдання
+    saveTasks(tasks.filter((t) => t.id !== taskId));
   };
 
   const toggleTask = (taskId) => {
@@ -49,7 +51,7 @@ const Main = ({ navigation }) => {
       tasks.map((t) =>
         t.id === taskId ? { ...t, completed: !t.completed } : t
       )
-    ); // Зберігаємо дані після зміни статусу завдання
+    );
   };
 
   const saveTasks = async (tasks) => {
@@ -72,7 +74,10 @@ const Main = ({ navigation }) => {
     }
   };
 
-  console.log(tasks);
+  const goToDailyTasks = () => {
+    navigation.navigate("DailyTasks"); // Перехід на сторінку DailyTasks
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Todo List</Text>
@@ -103,6 +108,7 @@ const Main = ({ navigation }) => {
           </View>
         )}
       />
+      <Button title="Go to Daily Tasks" onPress={goToDailyTasks} />
     </View>
   );
 };
