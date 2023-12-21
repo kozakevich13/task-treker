@@ -23,7 +23,7 @@ const DailyTasks = () => {
       id: Date.now().toString(),
       text: task,
       completed: false,
-      repeat: false,
+      repeat: true,
       repeat_num: 0,
     };
     if (task.trim() !== "") {
