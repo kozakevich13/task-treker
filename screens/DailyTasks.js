@@ -35,9 +35,25 @@ const DailyTasks = () => {
     }
   };
 
-  const removeTask = (taskId) => {
-    setTasks(tasks.filter((t) => t.id !== taskId));
-    saveTasks(tasks.filter((t) => t.id !== taskId));
+  const removeTask = async (taskId) => {
+    // Filter out the task from the state
+    const updatedTasks = tasks.filter((t) => t.id !== taskId);
+    setTasks(updatedTasks);
+
+    // Update local storage with the filtered tasks
+    saveTasks(updatedTasks);
+
+    // Also, check and remove the task from local storage under the key "tasks"
+    try {
+      const jsonTasks = await AsyncStorage.getItem("tasks");
+      if (jsonTasks) {
+        const storedTasks = JSON.parse(jsonTasks);
+        const updatedStoredTasks = storedTasks.filter((t) => t.id !== taskId);
+        await AsyncStorage.setItem("tasks", JSON.stringify(updatedStoredTasks));
+      }
+    } catch (error) {
+      console.error("Error removing task from local storage: ", error);
+    }
   };
 
   const saveTasks = async (tasks) => {
