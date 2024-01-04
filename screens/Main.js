@@ -169,7 +169,14 @@ const Main = () => {
       />
       <Button title="Add Task" onPress={addTask} />
       <FlatList
-        data={tasks}
+        data={tasks.sort((a, b) => {
+          // Sort by completion status, then by task type (daily tasks first)
+          if (!a.completed && b.completed) return -1;
+          if (a.completed && !b.completed) return 1;
+          if (a.type === "Daily" && b.type !== "Daily") return -1;
+          if (a.type !== "Daily" && b.type === "Daily") return 1;
+          return 0;
+        })}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.taskItem}>
@@ -190,6 +197,7 @@ const Main = () => {
           </View>
         )}
       />
+
       <Button title="Go to Daily Tasks" onPress={goToDailyTasks} />
     </View>
   );
