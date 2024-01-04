@@ -57,7 +57,7 @@ const Main = () => {
               ...t,
               completed: !t.completed,
               repeat_num: t.repeat_num + 1,
-              disabled: true, // Set disabled to true when completing the task
+              disabled: t.repeat, // Disable the checkbox only if repeat is true
             }
           : t
       )
@@ -88,31 +88,31 @@ const Main = () => {
     );
 
     setDisableCompletedTasks(true);
-    setTimeout(() => {
-      setTasks(
-        tasks.map((t) =>
-          t.id === taskId
-            ? {
-                ...t,
-                completed: false,
-              }
-            : t
-        )
-      );
-      saveTasks(
-        tasks.map((t) =>
-          t.id === taskId
-            ? {
-                ...t,
-                completed: false,
-                repeat_num: t.repeat_num + 1,
-                disabled: false,
-              } // Reset disabled to false
-            : t
-        )
-      );
-      setDisableCompletedTasks(false); // Move this line outside the setTimeout
-    }, 2000);
+
+    if (tasks.find((t) => t.id === taskId && t.repeat)) {
+      // Apply the timer logic only for tasks with repeat: true
+      setTimeout(() => {
+        setTasks(
+          tasks.map((t) =>
+            t.id === taskId
+              ? {
+                  ...t,
+                  completed: false,
+                  disabled: false, // Reset disabled to false after timer
+                }
+              : t
+          )
+        );
+        saveTasks(
+          tasks.map((t) =>
+            t.id === taskId
+              ? { ...t, completed: false, repeat_num: t.repeat_num + 1 }
+              : t
+          )
+        );
+        setDisableCompletedTasks(false);
+      }, 2000);
+    }
   };
 
   const saveTasks = async (tasks) => {
