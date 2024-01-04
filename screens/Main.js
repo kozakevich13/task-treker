@@ -35,6 +35,7 @@ const Main = () => {
       repeat: false,
       repeat_num: 0,
       disabled: false,
+      type: "Simple",
     };
     if (task.trim() !== "") {
       setTasks([...tasks, newTask]);
@@ -184,6 +185,7 @@ const Main = () => {
             >
               {item.text}
             </Text>
+            <Text>{item.type}</Text>
             <Button title="Remove" onPress={() => removeTask(item.id)} />
           </View>
         )}
