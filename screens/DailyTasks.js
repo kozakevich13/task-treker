@@ -25,6 +25,7 @@ const DailyTasks = () => {
       completed: false,
       repeat: true,
       repeat_num: 0,
+      disabled: false,
     };
     if (task.trim() !== "") {
       setTasks([...tasks, newTask]);

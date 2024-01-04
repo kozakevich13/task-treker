@@ -16,6 +16,7 @@ const Main = () => {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
   const [dailyTasks, setDailyTasks] = useState([]);
+  const [disableCompletedTasks, setDisableCompletedTasks] = useState(false);
 
   const navigation = useNavigation();
 
@@ -33,6 +34,7 @@ const Main = () => {
       completed: false,
       repeat: false,
       repeat_num: 0,
+      disabled: false,
     };
     if (task.trim() !== "") {
       setTasks([...tasks, newTask]);
@@ -51,10 +53,16 @@ const Main = () => {
     setTasks(
       tasks.map((t) =>
         t.id === taskId
-          ? { ...t, completed: !t.completed, repeat_num: t.repeat_num + 1 }
+          ? {
+              ...t,
+              completed: !t.completed,
+              repeat_num: t.repeat_num + 1,
+              disabled: true, // Set disabled to true when completing the task
+            }
           : t
       )
     );
+
     saveTasks(
       tasks.map((t) =>
         t.id === taskId
@@ -70,6 +78,7 @@ const Main = () => {
           : t
       )
     );
+
     saveDailyTasks(
       dailyTasks.map((t) =>
         t.id === taskId
@@ -77,6 +86,33 @@ const Main = () => {
           : t
       )
     );
+
+    setDisableCompletedTasks(true);
+    setTimeout(() => {
+      setTasks(
+        tasks.map((t) =>
+          t.id === taskId
+            ? {
+                ...t,
+                completed: false,
+              }
+            : t
+        )
+      );
+      saveTasks(
+        tasks.map((t) =>
+          t.id === taskId
+            ? {
+                ...t,
+                completed: false,
+                repeat_num: t.repeat_num + 1,
+                disabled: false,
+              } // Reset disabled to false
+            : t
+        )
+      );
+      setDisableCompletedTasks(false); // Move this line outside the setTimeout
+    }, 2000);
   };
 
   const saveTasks = async (tasks) => {
@@ -139,6 +175,7 @@ const Main = () => {
             <CheckBox
               value={item.completed}
               onValueChange={() => toggleTask(item.id)}
+              disabled={item.disabled}
             />
             <Text
               style={{
