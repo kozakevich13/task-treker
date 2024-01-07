@@ -16,7 +16,7 @@ const Main = () => {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
   const [dailyTasks, setDailyTasks] = useState([]);
-  const [disableCompletedTasks, setDisableCompletedTasks] = useState(false);
+  // const [disableCompletedTasks, setDisableCompletedTasks] = useState(false);
 
   const navigation = useNavigation();
 
@@ -58,7 +58,7 @@ const Main = () => {
               ...t,
               completed: !t.completed,
               repeat_num: t.repeat_num + 1,
-              disabled: t.repeat, // Disable the checkbox only if repeat is true
+              disabled: !t.disabled, // Disable the checkbox only if repeat is true
             }
           : t
       )
@@ -67,7 +67,12 @@ const Main = () => {
     saveTasks(
       tasks.map((t) =>
         t.id === taskId
-          ? { ...t, completed: !t.completed, repeat_num: t.repeat_num + 1 }
+          ? {
+              ...t,
+              completed: !t.completed,
+              disabled: !t.disabled,
+              repeat_num: t.repeat_num + 1,
+            }
           : t
       )
     );
@@ -75,7 +80,12 @@ const Main = () => {
     setDailyTasks(
       dailyTasks.map((t) =>
         t.id === taskId
-          ? { ...t, completed: !t.completed, repeat_num: t.repeat_num + 1 }
+          ? {
+              ...t,
+              completed: !t.completed,
+              disabled: !t.disabled,
+              repeat_num: t.repeat_num + 1,
+            }
           : t
       )
     );
@@ -83,12 +93,15 @@ const Main = () => {
     saveDailyTasks(
       dailyTasks.map((t) =>
         t.id === taskId
-          ? { ...t, completed: !t.completed, repeat_num: t.repeat_num + 1 }
+          ? {
+              ...t,
+              completed: !t.completed,
+              disabled: !t.disabled,
+              repeat_num: t.repeat_num + 1,
+            }
           : t
       )
     );
-
-    setDisableCompletedTasks(true);
 
     if (tasks.find((t) => t.id === taskId && t.repeat)) {
       // Apply the timer logic only for tasks with repeat: true
@@ -107,11 +120,15 @@ const Main = () => {
         saveTasks(
           tasks.map((t) =>
             t.id === taskId
-              ? { ...t, completed: false, repeat_num: t.repeat_num + 1 }
+              ? {
+                  ...t,
+                  completed: false,
+                  disabled: false,
+                  repeat_num: t.repeat_num + 1,
+                }
               : t
           )
         );
-        setDisableCompletedTasks(false);
       }, 2000);
     }
   };
